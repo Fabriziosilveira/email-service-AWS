@@ -34,6 +34,7 @@ To set up the project, follow these steps:
     cloud.aws.credentials.accessKey=YOUR_ACCESS_KEY
     cloud.aws.credentials.secretKey=YOUR_SECRET_KEY
     cloud.aws.region.static=YOUR_REGION
+    cloud.aws.ses.endpoint=YOUR_SES_ENDPOINT
 ```
 
 #### Where:
@@ -41,6 +42,7 @@ To set up the project, follow these steps:
 - `YOUR_ACCESS_KEY` is the access key for your AWS account.
 - `YOUR_SECRET_KEY` is the secret key for your AWS account.
 - `YOUR_REGION` is the AWS region you want to use.
+- `YOUR_SES_ENDPOINT` is the custom AWS SES endpoint. If you are using LocalStack or a custom SES endpoint, provide the URL of the endpoint here. Otherwise, this property can be left blank or omitted.
 
 
 
