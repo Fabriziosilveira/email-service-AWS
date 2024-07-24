@@ -1,35 +1,34 @@
 package com.silveira.email_service.infra.aws.ses;
 
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
-import com.amazonaws.services.simpleemail.model.*;
-import com.silveira.email_service.adapters.EmailSenderGateway;
-import com.silveira.email_service.core.exceptions.EmailServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.ses.SesClient;
+import software.amazon.awssdk.services.ses.model.*;
 
 @Service
-public class SesEmailSender implements EmailSenderGateway {
+public class SesEmailSender {
 
-    private final AmazonSimpleEmailService amazonSimpleEmailService;
+    private final SesClient sesClient;
 
     @Autowired
-    public SesEmailSender(AmazonSimpleEmailService amazonSimpleEmailService){
-        this.amazonSimpleEmailService = amazonSimpleEmailService;
+    public SesEmailSender(SesClient sesClient) {
+        this.sesClient = sesClient;
     }
 
-    @Override
-    public void SendEmail(String to, String subject, String body) {
-        SendEmailRequest request = new SendEmailRequest()
-                .withSource("") // Sender Email Address
-                .withDestination(new Destination().withToAddresses(to))
-                .withMessage(new Message()
-                        .withSubject(new Content(subject))
-                        .withBody(new Body().withText(new Content(body)))
-                );
-        try{
-            this.amazonSimpleEmailService.sendEmail(request);
-        }catch (AmazonSimpleEmailServiceException exception){
-            throw new EmailServiceException("Failure while sending email", exception);
+    public void sendEmail(String to, String subject, String body) {
+        try {
+            SendEmailRequest emailRequest = SendEmailRequest.builder()
+                    .destination(Destination.builder().toAddresses(to).build())
+                    .message(Message.builder()
+                            .subject(Content.builder().data(subject).build())
+                            .body(Body.builder().text(Content.builder().data(body).build()).build())
+                            .build())
+                    .source("silveira6602@gmail.com.com")
+                    .build();
+
+            sesClient.sendEmail(emailRequest);
+        } catch (SesException e) {
+            System.err.println("Email sending failed: " + e.awsErrorDetails().errorMessage());
         }
     }
 }

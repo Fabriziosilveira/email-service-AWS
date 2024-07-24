@@ -1,32 +1,28 @@
 package com.silveira.email_service.controllers;
 
-import com.silveira.email_service.application.EmailSenderService;
 import com.silveira.email_service.core.EmailRequest;
-import com.silveira.email_service.core.exceptions.EmailServiceException;
+import com.silveira.email_service.infra.aws.ses.SesEmailSender;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/email")
+@RequestMapping("/email")
 public class EmailSenderController {
-    private final EmailSenderService emailSenderService;
+
+    private final SesEmailSender sesEmailSender;
 
     @Autowired
-    public EmailSenderController(EmailSenderService emailService){
-        this.emailSenderService = emailService;
+    public EmailSenderController(SesEmailSender sesEmailSender) {
+        this.sesEmailSender = sesEmailSender;
     }
-    @PostMapping()
-    public ResponseEntity<String> sendEmail(@RequestBody EmailRequest request){
-        try{
-            this.emailSenderService.SendEmail(request.to(), request.subject(), request.body());
-            return ResponseEntity.ok("Email sent successfully");
-        }catch (EmailServiceException exception){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while sending email");
+
+    @PostMapping("/send")
+    public String sendEmail(@RequestBody EmailRequest emailRequest) {
+        try {
+            sesEmailSender.sendEmail(emailRequest.getTo(), emailRequest.getSubject(), emailRequest.getBody());
+            return "Email sent successfully.";
+        } catch (Exception e) {
+            return "Email sending failed.";
         }
     }
 }

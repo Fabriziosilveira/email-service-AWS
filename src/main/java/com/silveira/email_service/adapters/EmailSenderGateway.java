@@ -1,7 +1,7 @@
 package com.silveira.email_service.adapters;
 
 public interface EmailSenderGateway {
-    void SendEmail(
+    void sendEmail(
             String to,
             String subject,
             String body

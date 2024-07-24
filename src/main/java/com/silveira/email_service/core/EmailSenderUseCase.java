@@ -1,7 +1,7 @@
 package com.silveira.email_service.core;
 
 public interface EmailSenderUseCase {
-    void SendEmail(
+    void sendEmail(
             String to,
             String subject,
             String body
